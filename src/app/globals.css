@@ -1,0 +1,234 @@
+/* Fonts loaded via next/font in layout.tsx */
+:root {
+  /* Modern HSL Color Palette based on logo & sleek dark/light palette */
+  --primary-hue: 215;
+  --primary: hsl(var(--primary-hue), 85%, 35%);
+  --primary-light: hsl(var(--primary-hue), 85%, 45%);
+  --primary-dark: hsl(var(--primary-hue), 90%, 25%);
+  --primary-text: hsl(0, 0%, 100%);
+
+  --accent-hue: 260;
+  --accent: hsl(var(--accent-hue), 70%, 55%);
+  --accent-light: hsl(var(--accent-hue), 80%, 65%);
+
+  --secondary: hsl(215, 15%, 45%);
+  
+  --success: hsl(145, 65%, 42%);
+  --danger: hsl(354, 75%, 52%);
+  --warning: hsl(38, 92%, 50%);
+  --info: hsl(198, 85%, 48%);
+  
+  --bg-color: hsl(216, 28%, 97%);
+  --surface-color: hsl(0, 0%, 100%);
+  --surface-hover: hsl(216, 20%, 94%);
+  --text-primary: hsl(215, 25%, 15%);
+  --text-secondary: hsl(215, 12%, 46%);
+  --text-muted: hsl(215, 10%, 65%);
+  
+  --border-color: hsl(214, 20%, 88%);
+  --border-light: hsl(214, 20%, 93%);
+  
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --logo-filter: none;
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.09);
+  --shadow-glass: 0 10px 30px rgba(0, 0, 0, 0.05);
+  
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: hsl(var(--primary-hue), 80%, 60%);
+    --primary-light: hsl(var(--primary-hue), 85%, 70%);
+    --primary-dark: hsl(var(--primary-hue), 75%, 45%);
+    --primary-text: hsl(220, 25%, 10%);
+    
+    --bg-color: hsl(222, 28%, 10%);
+    --surface-color: hsl(222, 24%, 15%);
+    --surface-hover: hsl(222, 20%, 20%);
+    --text-primary: hsl(210, 20%, 96%);
+    --text-secondary: hsl(215, 15%, 72%);
+    --text-muted: hsl(215, 12%, 50%);
+    
+    --border-color: hsl(220, 20%, 24%);
+    --border-light: hsl(220, 20%, 18%);
+    
+    --glass-bg: rgba(22, 30, 46, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --logo-filter: invert(1) brightness(1.2);
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.4);
+    --shadow-glass: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-cairo), var(--font-inter), system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism & Panel Utilities */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  outline: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--primary-text);
+  box-shadow: 0 4px 12px hsla(var(--primary-hue), 85%, 45%, 0.25);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px hsla(var(--primary-hue), 85%, 45%, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--text-secondary);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* Inputs */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.input-field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px hsla(var(--primary-hue), 85%, 45%, 0.18);
+  outline: none;
+}
+
+.input-error {
+  border-color: var(--danger);
+}
+
+.error-message {
+  font-size: 0.8rem;
+  color: var(--danger);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-primary {
+  background: hsla(var(--primary-hue), 85%, 45%, 0.12);
+  color: var(--primary);
+}
+
+.badge-success {
+  background: rgba(145, 210, 160, 0.15);
+  color: var(--success);
+}
+
+/* Base Layout for App Router */
+.app-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}

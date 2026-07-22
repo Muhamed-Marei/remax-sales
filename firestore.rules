@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (request.auth.token.role == 'admin' || request.auth.token.admin == true);
+    }
+    
+    function isSalesperson() {
+      return isAuthenticated() && request.auth.token.role == 'salesperson';
+    }
+
+    // Admins can access everything in the DB
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /organizations/{orgId} {
+      
+      match /users/{userId} {
+        // Salesperson can read their own profile
+        allow read: if isSalesperson() && request.auth.uid == userId;
+      }
+      
+      match /auditLogs/{logId} {
+        // Client access denied (Admin SDK bypasses this)
+        allow read, write: if false; 
+      }
+      
+      match /activities/{activityId} {
+        // Sprint 1 scaffold
+        allow create: if isSalesperson() && request.resource.data.salesId == request.auth.uid;
+        allow read, update: if isSalesperson() && resource.data.salesId == request.auth.uid;
+      }
+      
+      match /deals/{dealId} {
+        // Sprint 1 scaffold
+        allow create: if isSalesperson() && request.resource.data.assignedSalesId == request.auth.uid;
+        allow read, update: if isSalesperson() && resource.data.assignedSalesId == request.auth.uid;
+      }
+
+      match /leads/{leadId} {
+        allow create: if isSalesperson() && request.resource.data.assignedSalesId == request.auth.uid;
+        allow read, update: if isSalesperson() && resource.data.assignedSalesId == request.auth.uid;
+      }
+      
+      match /dealStateHistory/{historyId} {
+        allow read: if isSalesperson();
+        allow create: if isSalesperson(); 
+      }
+      
+      match /settings/{docId} {
+        allow read: if isAuthenticated();
+      }
+    }
+  }
+}

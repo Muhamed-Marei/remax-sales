@@ -1,0 +1,28 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && (request.auth.token.role == 'admin' || request.auth.token.admin == true);
+    }
+
+    // Admins can read/write all files
+    match /{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Salespeople can upload unit photos to deals
+    match /deals/{dealId}/{fileName} {
+      allow read: if isAuthenticated(); 
+      allow write: if isAuthenticated() 
+                   && (request.auth.token.role == 'salesperson' || isAdmin())
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isAuthenticated() && (request.auth.token.role == 'salesperson' || isAdmin());
+    }
+  }
+}
