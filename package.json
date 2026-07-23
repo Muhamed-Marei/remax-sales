@@ -9,10 +9,10 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:rules": "firebase emulators:exec --only firestore,storage 'vitest run -c vitest.rules.config.ts'",
+    "test:rules": "npx --yes firebase-tools emulators:exec --only firestore,storage 'vitest run -c vitest.rules.config.ts'",
     "format": "prettier --write .",
-    "emulators": "firebase emulators:start",
-    "dev:emulators": "concurrently \"npm run dev\" \"npm run emulators\"",
+    "emulators": "npx --yes firebase-tools emulators:start",
+    "dev:emulators": "concurrently --kill-others-on-fail \"npm run dev\" \"npm run emulators\"",
     "seed:staging": "tsx scripts/seed_staging.ts",
     "seed:local": "cross-env FIREBASE_PROJECT_ID=\"remax-sales\" FIREBASE_AUTH_EMULATOR_HOST=\"127.0.0.1:9099\" FIRESTORE_EMULATOR_HOST=\"127.0.0.1:8080\" tsx scripts/seed_staging.ts"
   },
