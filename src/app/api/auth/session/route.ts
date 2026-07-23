@@ -25,7 +25,12 @@ export async function POST(request: NextRequest) {
       
       // If claims are missing or mismatched, update them and request client to refresh token
       if (currentRole !== userData?.role) {
+        // Fetch existing user record to preserve any other custom claims (like orgId)
+        const userRecord = await adminAuth.getUser(decodedToken.uid);
+        const existingClaims = userRecord.customClaims || {};
+
         await adminAuth.setCustomUserClaims(decodedToken.uid, {
+          ...existingClaims,
           role: userData?.role || 'salesperson',
           admin: userData?.role === 'admin'
         });

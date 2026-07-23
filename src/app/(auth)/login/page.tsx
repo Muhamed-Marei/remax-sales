@@ -53,12 +53,30 @@ export default function LoginPage() {
 
       // 3b. If server updated custom claims, refresh the token and retry
       if (response.status === 202) {
-        idToken = await userCredential.user.getIdToken(true);
-        response = await fetch('/api/auth/session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idToken }),
-        });
+        let retries = 3;
+        let success = false;
+        
+        while (retries > 0 && !success) {
+          // Wait 1 second before retrying to allow claims to propagate
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          idToken = await userCredential.user.getIdToken(true);
+          response = await fetch('/api/auth/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
+          });
+          
+          if (response.status === 200) {
+            success = true;
+          } else {
+            retries--;
+          }
+        }
+        
+        if (!success && response.status === 202) {
+          throw new Error('Timeout waiting for permissions to update. Please log in again.');
+        }
       }
 
       if (!response.ok) {

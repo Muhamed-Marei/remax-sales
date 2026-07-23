@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { writeAuditLog } from '../audit';
 import { logger } from '../logger';
 
-export async function saveActivity(orgId: string, salesId: string, activityData: DailyActivity, actorUid: string) {
+export async function saveActivity(orgId: string, salesId: string, activityData: z.infer<typeof dailyActivitySchema>, actorUid: string) {
   const validated = dailyActivitySchema.parse(activityData);
   const docId = `${salesId}_${validated.activityDate}`;
   const docRef = adminDb.collection(COLLECTIONS.ACTIVITIES).doc(docId);
@@ -60,7 +60,7 @@ export async function getActivityById(orgId: string, docId: string) {
   return { id: doc.id, ...doc.data() } as DailyActivity & { id: string, salesId: string };
 }
 
-export async function adminEditActivity(orgId: string, docId: string, newData: DailyActivity, adminUid: string) {
+export async function adminEditActivity(orgId: string, docId: string, newData: z.infer<typeof dailyActivitySchema>, adminUid: string) {
   const validated = dailyActivitySchema.parse(newData);
   const docRef = adminDb.collection(COLLECTIONS.ACTIVITIES).doc(docId);
   
