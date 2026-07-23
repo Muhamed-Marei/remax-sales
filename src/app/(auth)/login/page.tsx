@@ -40,14 +40,24 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       
       // 2. Get ID Token
-      const idToken = await userCredential.user.getIdToken();
+      let idToken = await userCredential.user.getIdToken();
       
       // 3. Send ID Token to our server to create a session cookie
-      const response = await fetch('/api/auth/session', {
+      let response = await fetch('/api/auth/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken }),
       });
+
+      // 3b. If server updated custom claims, refresh the token and retry
+      if (response.status === 202) {
+        idToken = await userCredential.user.getIdToken(true);
+        response = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        });
+      }
 
       if (!response.ok) {
         throw new Error('Failed to create session');

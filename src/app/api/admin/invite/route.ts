@@ -34,11 +34,16 @@ export async function POST(request: NextRequest) {
       emailVerified: false,
     });
 
+    const orgId = 'default'; // Hardcoded for MVP
+
     // 3. Assign the 'salesperson' role (custom claim)
-    await adminAuth.setCustomUserClaims(userRecord.uid, { role: 'salesperson' });
+    await adminAuth.setCustomUserClaims(userRecord.uid, { 
+      role: 'salesperson',
+      orgId,
+      admin: false
+    });
 
     // 4. Mirror the user in Firestore (organizations/default/users)
-    const orgId = 'default'; // Hardcoded for MVP
     const now = new Date();
     await adminDb.collection('organizations').doc(orgId).collection('users').doc(userRecord.uid).set({
       id: userRecord.uid,
