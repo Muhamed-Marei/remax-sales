@@ -71,9 +71,7 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
       const data = doc.data();
       return { 
         id: doc.id, 
-        ...data,
-        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt,
-        lastLoginAt: data.lastLoginAt?.toDate ? data.lastLoginAt.toDate().toISOString() : data.lastLoginAt
+        displayName: data.displayName || 'Unknown',
       } as User;
     });
     activities = fetchedActivities;
