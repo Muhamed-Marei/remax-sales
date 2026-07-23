@@ -5,6 +5,7 @@ import styles from './user-profile.module.css';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
 import { calculateKPIs } from '@/lib/analytics/kpi';
+import { calculateChartData } from '@/lib/analytics/charts';
 import { DashboardFilterPanel } from '@/components/DashboardFilterPanel';
 import { DashboardCharts } from '@/components/DashboardCharts';
 import { AttendanceStatus, DealState } from '@/lib/types';
@@ -65,6 +66,7 @@ export default async function UserProfilePage(props: UserProfilePageProps) {
   });
 
   const kpis = calculateKPIs(activities, deals);
+  const chartData = calculateChartData(activities, deals, false);
 
   return (
     <div className={styles.container}>
@@ -105,7 +107,7 @@ export default async function UserProfilePage(props: UserProfilePageProps) {
         </div>
       </div>
 
-      <DashboardCharts activities={activities} deals={deals} isAdmin={false} />
+      <DashboardCharts trendData={chartData.trendData} isAdmin={false} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
         <div className="glass-panel" style={{ padding: '1.5rem' }}>

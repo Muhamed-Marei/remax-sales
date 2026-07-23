@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
 import { calculateKPIs } from '@/lib/analytics/kpi';
+import { calculateChartData } from '@/lib/analytics/charts';
 import { COLLECTIONS } from '@/lib/constants/collections';
 import { DashboardFilterPanel } from '@/components/DashboardFilterPanel';
 import { DashboardCharts } from '@/components/DashboardCharts';
@@ -38,31 +39,93 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
   const dealState = searchParams.dealState as DealState;
   const salesId = searchParams.salesId as string;
 
-  // Fetch salespeople for the filter panel and activities/deals in parallel
-  const [usersSnapshot, activities, deals] = await Promise.all([
-    adminDb
-      .collection(COLLECTIONS.USERS)
-      .where('role', '==', 'salesperson')
-      .get(),
-    getFilteredActivities({
-      orgId: claims.orgId,
-      salesId,
-      startDate,
-      endDate,
-      attendance,
-    }),
-    getFilteredDeals({
-      orgId: claims.orgId,
-      salesId,
-      startDate,
-      endDate,
-      dealState,
-    })
-  ]);
-  
-  const salespeople = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+  let salespeople: User[] = [];
+  let activities: any[] = [];
+  let deals: any[] = [];
+  let errorState: { message: string, indexLink?: string } | null = null;
 
-  const kpis = calculateKPIs(activities, deals);
+  try {
+    // Fetch salespeople for the filter panel and activities/deals in parallel
+    const [usersSnapshot, fetchedActivities, fetchedDeals] = await Promise.all([
+      adminDb
+        .collection(COLLECTIONS.USERS)
+        .where('role', '==', 'salesperson')
+        .get(),
+      getFilteredActivities({
+        orgId: claims.orgId,
+        salesId,
+        startDate,
+        endDate,
+        attendance,
+      }),
+      getFilteredDeals({
+        orgId: claims.orgId,
+        salesId,
+        startDate,
+        endDate,
+        dealState,
+      })
+    ]);
+    
+    salespeople = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    activities = fetchedActivities;
+    deals = fetchedDeals;
+  } catch (error: any) {
+    console.error('Admin Overview Data Fetch Error:', error);
+    const errorMessage = error.message || 'Failed to load admin data';
+    let indexLink = '';
+    
+    // Extract Firebase Console index creation link if present
+    const urlMatch = errorMessage.match(/(https:\/\/console\.firebase\.google\.com[^\s]+)/);
+    if (urlMatch) {
+      indexLink = urlMatch[1];
+    }
+    
+    errorState = { message: errorMessage, indexLink };
+  }
+
+  if (errorState) {
+    return (
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Admin Overview</h1>
+        </header>
+        
+        <div className="glass-panel" style={{ padding: '3rem 2rem', textAlign: 'center', marginTop: '2rem' }}>
+          <AlertCircle size={48} style={{ color: 'var(--danger)', margin: '0 auto 1rem' }} />
+          <h2 style={{ color: 'var(--danger)', marginBottom: '1rem' }}>Failed to load Dashboard Data</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', maxWidth: '600px', margin: '0 auto 1.5rem', wordBreak: 'break-word' }}>
+            {errorState.message}
+          </p>
+          
+          {errorState.indexLink && (
+            <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(var(--primary-rgb), 0.1)', borderRadius: 'var(--radius-md)', display: 'inline-block', textAlign: 'left' }}>
+              <h3 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text)' }}>
+                <AlertTriangle size={20} className="text-warning" />
+                Missing Database Index
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                Firebase requires a composite index to run this specific filter combination efficiently. 
+                Click the button below to create it in the Firebase Console.
+              </p>
+              <a 
+                href={errorState.indexLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{ textDecoration: 'none' }}
+              >
+                Create Index in Firebase
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const kpis = calculateKPIs(activities as any, deals as any);
+  const chartData = calculateChartData(activities as any, deals as any, true);
 
   return (
     <div className={styles.container}>
@@ -107,7 +170,12 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
           </div>
         </div>
 
-        <DashboardCharts activities={activities} deals={deals} isAdmin={true} />
+        <DashboardCharts 
+          trendData={chartData.trendData} 
+          sourceMixData={chartData.sourceMixData}
+          dealPipelineData={chartData.dealPipelineData}
+          isAdmin={true} 
+        />
 
         <div className={styles.summaryGrid}>
           <div className={`glass-panel ${styles.summaryCard}`}>

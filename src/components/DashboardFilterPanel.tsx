@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useCallback, Suspense } from 'react';
+import { useCallback, Suspense, useTransition } from 'react';
 import { User } from '@/lib/types';
 import styles from './DashboardFilterPanel.module.css';
 import { FilterX } from 'lucide-react';
@@ -15,6 +15,7 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -30,11 +31,22 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
   );
 
   const handleFilterChange = (name: string, value: string) => {
-    router.push(pathname + '?' + createQueryString(name, value));
+    startTransition(() => {
+      router.push(pathname + '?' + createQueryString(name, value));
+    });
+  };
+
+  const handleClear = () => {
+    startTransition(() => {
+      router.push(pathname);
+    });
   };
 
   return (
-    <div className={styles.filterPanel}>
+    <div className={styles.filterPanel} style={{ opacity: isPending ? 0.7 : 1, transition: 'opacity 0.2s ease', position: 'relative' }}>
+      {isPending && (
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'var(--primary)', animation: 'pulse 1.5s infinite', borderTopLeftRadius: 'var(--radius-md)', borderTopRightRadius: 'var(--radius-md)' }} />
+      )}
       {isAdmin && (
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>Salesperson</label>
@@ -104,8 +116,9 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
       
       <div className={styles.clearButtonContainer}>
         <button 
-          onClick={() => router.push(pathname)}
+          onClick={handleClear}
           className="btn btn-secondary"
+          disabled={isPending}
         >
           <FilterX size={16} />
           Clear Filters
