@@ -1,7 +1,7 @@
 import { verifySession } from '@/lib/auth/session';
 import { getLeadById } from '@/lib/repositories/lead';
 import { COLLECTIONS } from '@/lib/constants/collections';
-import { redirect, notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import LeadForm from '@/components/forms/LeadForm';
 import { adminDb } from '@/lib/firebase/admin';
 

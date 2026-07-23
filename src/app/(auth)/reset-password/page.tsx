@@ -41,9 +41,7 @@ function ResetPasswordForm() {
 
   useEffect(() => {
     if (!oobCode) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError('Invalid or missing action code.');
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsVerifying(false);
       return;
     }

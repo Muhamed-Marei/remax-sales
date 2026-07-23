@@ -7,6 +7,7 @@ type DbDeal = Deal & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: Fire
 /**
  * Helper to serialize Firestore timestamps to strings
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function serializeDoc(docData: any, id: string) {
   const data = { ...docData, id };
   if (data.createdAt?.toDate) {

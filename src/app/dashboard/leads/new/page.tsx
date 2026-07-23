@@ -15,7 +15,6 @@ export default async function NewLeadPage() {
   let salespeople: { id: string; name: string }[] = [];
 
   if (isAdmin) {
-    const orgId = 'default';
     const snapshot = await adminDb.collection(COLLECTIONS.USERS).where('role', '==', 'salesperson').get();
     salespeople = snapshot.docs.map(doc => ({
       id: doc.id,

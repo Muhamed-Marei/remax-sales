@@ -17,7 +17,6 @@ export default async function NewDealPage() {
   let salespeople: { id: string; name: string }[] = [];
 
   if (isAdmin) {
-    const orgId = 'default';
     const snapshot = await adminDb.collection(COLLECTIONS.USERS).where('role', '==', 'salesperson').get();
     salespeople = snapshot.docs.map(doc => ({
       id: doc.id,
@@ -25,7 +24,6 @@ export default async function NewDealPage() {
     }));
   }
 
-  const orgId = 'default';
   let leadsQuery: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.LEADS);
   if (!isAdmin) {
     leadsQuery = leadsQuery.where('assignedSalesId', '==', claims.uid);
