@@ -33,7 +33,8 @@ async function seedStaging() {
       createdAt: FieldValue.serverTimestamp(),
     });
     console.log('Admin user created.');
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as Error & { code?: string };
     if (error.code === 'auth/email-already-exists') {
       console.log('Admin user already exists. Updating password...');
       const user = await auth.getUserByEmail('admin@saletrack.local');
@@ -60,7 +61,8 @@ async function seedStaging() {
       updatedAt: FieldValue.serverTimestamp(),
     }, { merge: true });
     console.log('Golden House Admin user created.');
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as Error & { code?: string };
     if (error.code === 'auth/email-already-exists' || error.code === 'auth/uid-already-exists') {
       console.log('Golden House Admin user already exists in Auth. Updating password...');
       await auth.updateUser('ndrypuxhFpNXih38PzSMb4MuJp1', { password: 'Password123!' });
@@ -88,7 +90,8 @@ async function seedStaging() {
       createdAt: FieldValue.serverTimestamp(),
     });
     console.log('Salesperson user created.');
-  } catch (error: any) {
+  } catch (err) {
+    const error = err as Error & { code?: string };
     if (error.code === 'auth/email-already-exists') {
       console.log('Salesperson user already exists. Fetching UID...');
       const user = await auth.getUserByEmail('sales@saletrack.local');

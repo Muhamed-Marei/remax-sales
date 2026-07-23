@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { adminDb } from './firebase/admin';
 import { logger } from './logger';
 

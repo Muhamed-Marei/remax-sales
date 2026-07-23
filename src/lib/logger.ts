@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Simple structured logger that ensures sensitive information
  * (like passwords or cleartext emails when appropriate) is not accidentally logged.

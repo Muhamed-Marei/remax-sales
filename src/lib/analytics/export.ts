@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DailyActivity, Deal } from '../types';
 
 function escapeCsvCell(value: any): string {

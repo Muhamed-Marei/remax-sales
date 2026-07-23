@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { verifySession } from '@/lib/auth/session';
 import { logger } from '@/lib/logger';

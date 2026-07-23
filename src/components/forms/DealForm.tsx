@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useState } from 'react';

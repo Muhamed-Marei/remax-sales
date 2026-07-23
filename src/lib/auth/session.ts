@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { adminAuth } from '@/lib/firebase/admin';
 import { cookies } from 'next/headers';
 

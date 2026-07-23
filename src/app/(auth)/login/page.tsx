@@ -58,12 +58,13 @@ export default function LoginPage() {
       // 4. Redirect to dashboard
       router.push('/dashboard');
       router.refresh(); // Force refresh to apply middleware state
-    } catch (err: any) {
-      console.error(err);
-      if (err.code === 'auth/invalid-credential') {
+    } catch (err) {
+      const error = err as Error & { code?: string };
+      console.error(error);
+      if (error.code === 'auth/invalid-credential') {
         setError('Invalid email or password. Please check your credentials and try again.');
       } else {
-        setError(err.message || 'An error occurred during login.');
+        setError(error.message || 'An error occurred during login.');
       }
     } finally {
       setIsLoading(false);
@@ -76,6 +77,7 @@ export default function LoginPage() {
         
         {/* Brand Header with Logo */}
         <div style={{ textAlign: 'center', marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+          <h1 className="sr-only">Login</h1>
           <Logo size="lg" showText={true} text="SaleTrack" />
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
             Welcome back! Sign in to access your sales workspace.

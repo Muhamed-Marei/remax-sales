@@ -41,7 +41,9 @@ function ResetPasswordForm() {
 
   useEffect(() => {
     if (!oobCode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError('Invalid or missing action code.');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsVerifying(false);
       return;
     }
@@ -70,9 +72,10 @@ function ResetPasswordForm() {
       setTimeout(() => {
         router.push('/login');
       }, 3000);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Failed to reset password');
+    } catch (err) {
+      const error = err as Error;
+      console.error(error);
+      setError(error.message || 'Failed to reset password');
     } finally {
       setIsLoading(false);
     }

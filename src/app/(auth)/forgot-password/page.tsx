@@ -41,9 +41,10 @@ export default function ForgotPasswordPage() {
 
       await sendPasswordResetEmail(auth, data.email, actionCodeSettings);
       setSuccess(true);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Failed to send reset email');
+    } catch (err) {
+      const error = err as Error;
+      console.error(error);
+      setError(error.message || 'Failed to send reset email');
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +68,7 @@ export default function ForgotPasswordPage() {
         {success ? (
           <div style={{ textAlign: 'center' }}>
             <div style={{ padding: '1rem', backgroundColor: 'hsla(145, 65%, 42%, 0.12)', border: '1px solid var(--success)', color: 'var(--success)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-              Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.
+              Check your email for a link to reset your password. If it doesn&apos;t appear within a few minutes, check your spam folder.
             </div>
             <Link href="/login" className="btn btn-primary" style={{ width: '100%' }}>
               Return to Login

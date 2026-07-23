@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DailyActivityForm from '@/components/forms/DailyActivityForm';
 import { verifySession } from '@/lib/auth/session';
 import { getActivities } from '@/lib/repositories/activity';

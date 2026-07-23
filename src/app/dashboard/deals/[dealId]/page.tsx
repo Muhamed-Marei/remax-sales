@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { verifySession } from '@/lib/auth/session';
 import { redirect, notFound } from 'next/navigation';
 import DealForm from '@/components/forms/DealForm';

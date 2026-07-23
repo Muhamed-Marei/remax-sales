@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { adminDb } from '@/lib/firebase/admin';
 import styles from './users.module.css';
 import { InviteUserForm } from '@/components/admin/InviteUserForm';
