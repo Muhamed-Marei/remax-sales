@@ -62,7 +62,7 @@ jobs:
       - name: Run Playwright Tests
         run: npx playwright test
         env:
-          NEXT_PUBLIC_FIREBASE_EMULATOR: 'true'
+          NEXT_PUBLIC_USE_EMULATOR: 'true'
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -7,7 +7,7 @@ import { logger } from '../logger';
 import { FieldValue } from 'firebase-admin/firestore';
 import { COLLECTIONS } from '@/lib/constants/collections';
 
-export async function saveDeal(orgId: string, dealData: Deal, actorUid: string, dealId?: string) {
+export async function saveDeal(orgId: string, dealData: z.infer<typeof dealSchema>, actorUid: string, dealId?: string) {
   const validated = dealSchema.parse(dealData);
   
   const dealsCollection = adminDb.collection(COLLECTIONS.DEALS);
@@ -61,7 +61,7 @@ export async function getDeals(orgId: string, salesId?: string, state?: string) 
   }
 
   const snapshot = await query.get();
-  return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as DbDeal) }));
+  return snapshot.docs.map(d => ({ ...(d.data() as DbDeal), id: d.id }));
 }
 
 export async function getDealById(orgId: string, dealId: string) {
@@ -69,5 +69,5 @@ export async function getDealById(orgId: string, dealId: string) {
   if (!doc.exists) {
     return null;
   }
-  return { id: doc.id, ...(doc.data() as DbDeal) };
+  return { ...(doc.data() as DbDeal), id: doc.id };
 }

@@ -9,7 +9,7 @@ import { COLLECTIONS } from '@/lib/constants/collections';
 
 type DbLead = Lead & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: FirebaseFirestore.Timestamp };
 
-export async function saveLead(orgId: string, leadData: Lead, actorUid: string, leadId?: string) {
+export async function saveLead(orgId: string, leadData: z.infer<typeof leadSchema>, actorUid: string, leadId?: string) {
   const validated = leadSchema.parse(leadData);
   
   const leadsCollection = adminDb.collection(COLLECTIONS.LEADS);
@@ -47,7 +47,7 @@ export async function getLeads(orgId: string, salesId?: string, status?: string)
   }
 
   const snapshot = await query.get();
-  return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as DbLead) }));
+  return snapshot.docs.map(d => ({ ...(d.data() as DbLead), id: d.id }));
 }
 
 export async function getLeadById(orgId: string, leadId: string) {
@@ -55,5 +55,5 @@ export async function getLeadById(orgId: string, leadId: string) {
   if (!doc.exists) {
     return null;
   }
-  return { id: doc.id, ...(doc.data() as DbLead) };
+  return { ...(doc.data() as DbLead), id: doc.id };
 }
