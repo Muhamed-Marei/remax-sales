@@ -95,6 +95,7 @@ export default function AppBar({ portalType = 'sales' }: AppBarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 style={{
                   padding: '0.5rem 1rem',
                   borderRadius: 'var(--radius-md)',

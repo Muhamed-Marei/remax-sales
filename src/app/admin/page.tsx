@@ -34,31 +34,31 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
   const dealState = searchParams.dealState as DealState;
   const salesId = searchParams.salesId as string;
 
-  // Fetch salespeople for the filter panel
-  const usersSnapshot = await adminDb
-    .collection('organizations')
-    .doc(claims.orgId)
-    .collection('users')
-    .where('role', '==', 'salesperson')
-    .get();
+  // Fetch salespeople for the filter panel and activities/deals in parallel
+  const [usersSnapshot, activities, deals] = await Promise.all([
+    adminDb
+      .collection('organizations')
+      .doc(claims.orgId)
+      .collection('users')
+      .where('role', '==', 'salesperson')
+      .get(),
+    getFilteredActivities({
+      orgId: claims.orgId,
+      salesId,
+      startDate,
+      endDate,
+      attendance,
+    }),
+    getFilteredDeals({
+      orgId: claims.orgId,
+      salesId,
+      startDate,
+      endDate,
+      dealState,
+    })
+  ]);
   
   const salespeople = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-
-  const activities = await getFilteredActivities({
-    orgId: claims.orgId,
-    salesId,
-    startDate,
-    endDate,
-    attendance,
-  });
-
-  const deals = await getFilteredDeals({
-    orgId: claims.orgId,
-    salesId,
-    startDate,
-    endDate,
-    dealState,
-  });
 
   const kpis = calculateKPIs(activities, deals);
 

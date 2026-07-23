@@ -13,7 +13,7 @@ export async function verifySession() {
   }
 
   try {
-    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, true);
+    const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie, false);
     return decodedClaims;
   } catch (error: any) {
     if (error.code === 'auth/session-cookie-revoked' || error.message?.includes('revoked')) {

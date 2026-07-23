@@ -32,21 +32,22 @@ export default async function DashboardPage(props: DashboardPageProps) {
   const attendance = searchParams.attendance as AttendanceStatus;
   const dealState = searchParams.dealState as DealState;
 
-  const activities = await getFilteredActivities({
-    orgId: claims.orgId,
-    salesId: claims.uid,
-    startDate,
-    endDate,
-    attendance,
-  });
-
-  const deals = await getFilteredDeals({
-    orgId: claims.orgId,
-    salesId: claims.uid,
-    startDate,
-    endDate,
-    dealState,
-  });
+  const [activities, deals] = await Promise.all([
+    getFilteredActivities({
+      orgId: claims.orgId,
+      salesId: claims.uid,
+      startDate,
+      endDate,
+      attendance,
+    }),
+    getFilteredDeals({
+      orgId: claims.orgId,
+      salesId: claims.uid,
+      startDate,
+      endDate,
+      dealState,
+    })
+  ]);
 
   const kpis = calculateKPIs(activities, deals);
 
