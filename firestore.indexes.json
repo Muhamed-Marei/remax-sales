@@ -4,6 +4,15 @@
       "collectionGroup": "activities",
       "queryScope": "COLLECTION",
       "fields": [
+        { "fieldPath": "orgId", "order": "ASCENDING" },
+        { "fieldPath": "activityDate", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "activities",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "orgId", "order": "ASCENDING" },
         { "fieldPath": "salesId", "order": "ASCENDING" },
         { "fieldPath": "activityDate", "order": "DESCENDING" }
       ]
@@ -12,6 +21,7 @@
       "collectionGroup": "activities",
       "queryScope": "COLLECTION",
       "fields": [
+        { "fieldPath": "orgId", "order": "ASCENDING" },
         { "fieldPath": "attendance", "order": "ASCENDING" },
         { "fieldPath": "activityDate", "order": "DESCENDING" }
       ]
@@ -20,6 +30,15 @@
       "collectionGroup": "deals",
       "queryScope": "COLLECTION",
       "fields": [
+        { "fieldPath": "orgId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "deals",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "orgId", "order": "ASCENDING" },
         { "fieldPath": "assignedSalesId", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
@@ -28,6 +47,7 @@
       "collectionGroup": "deals",
       "queryScope": "COLLECTION",
       "fields": [
+        { "fieldPath": "orgId", "order": "ASCENDING" },
         { "fieldPath": "dealState", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
