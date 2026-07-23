@@ -18,8 +18,9 @@ export function proxy(request: NextRequest) {
   }
 
   // If user is logged in and tries to access auth routes (like login)
+  // Redirect to root — page.tsx will handle role-based routing to /admin or /dashboard
   if (session && isAuthRoute) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();

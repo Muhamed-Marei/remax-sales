@@ -22,7 +22,7 @@ export default function NotFound() {
         <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
           The page or resource you are looking for does not exist or has been moved.
         </p>
-        <Link href="/dashboard" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', textDecoration: 'none' }}>
+        <Link href="/" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', textDecoration: 'none' }}>
           Back to Workspace
         </Link>
       </div>

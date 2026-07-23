@@ -10,6 +10,9 @@ type DbDeal = Deal & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: Fire
 export async function getFilteredActivities(filter: DashboardFilter): Promise<(DailyActivity & { id: string })[]> {
   let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.ACTIVITIES);
   
+  if (filter.orgId) {
+    query = query.where('orgId', '==', filter.orgId);
+  }
   if (filter.salesId) {
     query = query.where('salesId', '==', filter.salesId);
   }
@@ -38,6 +41,9 @@ export async function getFilteredActivities(filter: DashboardFilter): Promise<(D
 export async function getFilteredDeals(filter: DashboardFilter): Promise<(DbDeal & { id: string })[]> {
   let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.DEALS);
   
+  if (filter.orgId) {
+    query = query.where('orgId', '==', filter.orgId);
+  }
   if (filter.salesId) {
     query = query.where('assignedSalesId', '==', filter.salesId);
   }
