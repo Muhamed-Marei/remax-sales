@@ -4,14 +4,14 @@ import DealForm from '@/components/forms/DealForm';
 import { getDealById } from '@/lib/repositories/deal';
 import { adminDb } from '@/lib/firebase/admin';
 
-export default async function EditDealPage({ params }: { params: { dealId: string } }) {
+export default async function EditDealPage(props: { params: Promise<{ dealId: string }> }) {
   const claims = await verifySession();
   
   if (!claims || !claims.uid) {
     redirect('/login');
   }
 
-  const { dealId } = params;
+  const { dealId } = await props.params;
   const orgId = 'default';
   
   const deal = await getDealById(orgId, dealId);

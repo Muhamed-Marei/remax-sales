@@ -1,6 +1,6 @@
 import { adminDb } from '@/lib/firebase/admin';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import styles from './user-profile.module.css';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
@@ -21,8 +21,12 @@ export default async function UserProfilePage(props: UserProfilePageProps) {
   const searchParams = await props.searchParams;
   const claims = await verifySession();
 
-  if (!claims || !claims.orgId || claims.role !== 'admin') {
-    return <div className={styles.container}>Access Denied</div>;
+  if (!claims || !claims.orgId) {
+    redirect('/login');
+  }
+
+  if (claims.role !== 'admin' && claims.admin !== true) {
+    redirect('/dashboard');
   }
 
   const orgId = claims.orgId;

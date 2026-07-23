@@ -4,15 +4,16 @@ import { redirect } from 'next/navigation';
 import LeadForm from '@/components/forms/LeadForm';
 import { adminDb } from '@/lib/firebase/admin';
 
-export default async function EditLeadPage({ params }: { params: { leadId: string } }) {
+export default async function EditLeadPage(props: { params: Promise<{ leadId: string }> }) {
   const claims = await verifySession();
   
   if (!claims || !claims.uid) {
     redirect('/login');
   }
 
+  const { leadId } = await props.params;
   const orgId = 'default';
-  const lead = await getLeadById(orgId, params.leadId);
+  const lead = await getLeadById(orgId, leadId);
 
   if (!lead) {
     redirect('/dashboard/leads');

@@ -3,11 +3,10 @@ import { verifySession } from '@/lib/auth/session';
 import { getDeals } from '@/lib/repositories/deal';
 import { redirect } from 'next/navigation';
 
-export default async function DealsPage({
-  searchParams,
-}: {
-  searchParams: { state?: string };
+export default async function DealsPage(props: {
+  searchParams: Promise<{ state?: string }>;
 }) {
+  const searchParams = await props.searchParams;
   const claims = await verifySession();
   
   if (!claims || !claims.uid) {

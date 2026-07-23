@@ -1,4 +1,5 @@
 import styles from './users/users.module.css';
+import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
 import { calculateKPIs } from '@/lib/analytics/kpi';
@@ -15,8 +16,12 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
   const searchParams = await props.searchParams;
   const claims = await verifySession();
   
-  if (!claims || !claims.orgId || claims.role !== 'admin') {
-    return <div className={styles.container}>Access Denied</div>;
+  if (!claims || !claims.orgId) {
+    redirect('/login');
+  }
+
+  if (claims.role !== 'admin' && claims.admin !== true) {
+    redirect('/dashboard');
   }
 
   const now = new Date();

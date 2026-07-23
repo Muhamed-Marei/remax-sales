@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
 import { calculateKPIs } from '@/lib/analytics/kpi';
@@ -14,8 +15,12 @@ export default async function DashboardPage(props: DashboardPageProps) {
   const searchParams = await props.searchParams;
   const claims = await verifySession();
   
-  if (!claims || !claims.orgId || claims.role !== 'salesperson') {
-    return <div>Access Denied</div>;
+  if (!claims || !claims.orgId) {
+    redirect('/login');
+  }
+
+  if (claims.role === 'admin') {
+    redirect('/admin');
   }
 
   const now = new Date();

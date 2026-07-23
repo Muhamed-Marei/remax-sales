@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { adminDb } from '@/lib/firebase/admin';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
@@ -16,8 +17,12 @@ export default async function ReportsPage(props: ReportsPageProps) {
   const searchParams = await props.searchParams;
   const claims = await verifySession();
   
-  if (!claims || !claims.orgId || claims.role !== 'admin') {
-    return <div className={styles.container}>Access Denied</div>;
+  if (!claims || !claims.orgId) {
+    redirect('/login');
+  }
+
+  if (claims.role !== 'admin' && claims.admin !== true) {
+    redirect('/dashboard');
   }
 
   const now = new Date();

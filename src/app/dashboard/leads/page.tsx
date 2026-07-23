@@ -3,11 +3,10 @@ import { verifySession } from '@/lib/auth/session';
 import { getLeads } from '@/lib/repositories/lead';
 import { redirect } from 'next/navigation';
 
-export default async function LeadsPage({
-  searchParams,
-}: {
-  searchParams: { status?: string };
+export default async function LeadsPage(props: {
+  searchParams: Promise<{ status?: string }>;
 }) {
+  const searchParams = await props.searchParams;
   const claims = await verifySession();
   
   if (!claims || !claims.uid) {
