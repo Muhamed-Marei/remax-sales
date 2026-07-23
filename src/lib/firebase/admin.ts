@@ -23,26 +23,32 @@ const initializeFirebaseAdmin = () => {
     return true;
   }
 
-  // If we are missing the private key (e.g. during a build step without env vars), skip initialization
-  // so that getAuth() doesn't throw and crash the build.
-  if (!process.env.FIREBASE_PRIVATE_KEY) {
-    console.warn('Missing FIREBASE_PRIVATE_KEY. Skipping Firebase Admin initialization.');
-    return false;
+  // Explicit service account credentials (if provided)
+  if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+    try {
+      initializeApp({
+        credential: cert({
+          projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'remax-sales',
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        }),
+        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      });
+      return true;
+    } catch (error) {
+      console.error('Firebase Admin initialization with cert error', error);
+    }
   }
 
+  // Application Default Credentials (ADC) - standard on Firebase App Hosting / Cloud Run
   try {
     initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        // Handle escaped newlines in the private key
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID || 'remax-sales',
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     });
     return true;
   } catch (error) {
-    console.error('Firebase admin initialization error', error);
+    console.warn('Firebase Admin initialization with ADC skipped or failed:', error);
     return false;
   }
 };

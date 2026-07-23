@@ -1,4 +1,8 @@
 {
+  "apphosting": {
+    "backendId": "remax-sales",
+    "rootDir": "/"
+  },
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
