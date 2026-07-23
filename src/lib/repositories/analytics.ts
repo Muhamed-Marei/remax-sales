@@ -5,6 +5,24 @@ import { COLLECTIONS } from '@/lib/constants/collections';
 type DbDeal = Deal & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: FirebaseFirestore.Timestamp };
 
 /**
+ * Helper to serialize Firestore timestamps to strings
+ */
+function serializeDoc(docData: any, id: string) {
+  const data = { ...docData, id };
+  if (data.createdAt?.toDate) {
+    data.createdAt = data.createdAt.toDate().toISOString();
+  } else if (data.createdAt instanceof Date) {
+    data.createdAt = data.createdAt.toISOString();
+  }
+  if (data.updatedAt?.toDate) {
+    data.updatedAt = data.updatedAt.toDate().toISOString();
+  } else if (data.updatedAt instanceof Date) {
+    data.updatedAt = data.updatedAt.toISOString();
+  }
+  return data;
+}
+
+/**
  * Fetch activities matching the dashboard filter.
  */
 export async function getFilteredActivities(filter: DashboardFilter): Promise<(DailyActivity & { id: string })[]> {
@@ -32,7 +50,7 @@ export async function getFilteredActivities(filter: DashboardFilter): Promise<(D
   query = query.orderBy('activityDate', 'desc');
 
   const snapshot = await query.get();
-  return snapshot.docs.map(d => ({ ...d.data(), id: d.id } as DailyActivity & { id: string }));
+  return snapshot.docs.map(d => serializeDoc(d.data(), d.id) as DailyActivity & { id: string });
 }
 
 /**
@@ -73,5 +91,5 @@ export async function getFilteredDeals(filter: DashboardFilter): Promise<(DbDeal
   }
 
   const snapshot = await query.get();
-  return snapshot.docs.map(d => ({ ...(d.data() as DbDeal), id: d.id }));
+  return snapshot.docs.map(d => serializeDoc(d.data(), d.id) as DbDeal & { id: string });
 }

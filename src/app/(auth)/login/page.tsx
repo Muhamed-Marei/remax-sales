@@ -168,7 +168,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
           SaleTrack Platform • Secure Workspace
         </div>
       </div>

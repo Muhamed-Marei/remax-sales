@@ -1,4 +1,4 @@
-import styles from './users/users.module.css';
+import styles from './admin.module.css';
 import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
@@ -8,6 +8,7 @@ import { DashboardFilterPanel } from '@/components/DashboardFilterPanel';
 import { DashboardCharts } from '@/components/DashboardCharts';
 import { AttendanceStatus, DealState, User } from '@/lib/types';
 import { adminDb } from '@/lib/firebase/admin';
+import { Users, Target, TrendingUp, DollarSign, AlertCircle, AlertTriangle } from '@/components/ui/Icons';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,63 +70,82 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
         <h1 className={styles.title}>Admin Overview</h1>
       </header>
       
-      <div className={styles.content}>
+      <div>
         <DashboardFilterPanel isAdmin={true} salespeople={salespeople} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-          <div className="glass-panel" style={{ padding: '1.5rem', textAlign: 'center' }}>
-            <h3>Team Leads</h3>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{kpis.totalLeads}</p>
+        <div className={styles.kpiGrid}>
+          <div className={`glass-panel ${styles.kpiCard}`}>
+            <div className={styles.kpiHeader}>
+              <h3>Team Leads</h3>
+              <Users className={styles.kpiIcon} size={20} />
+            </div>
+            <p className={styles.kpiValue}>{kpis.totalLeads}</p>
           </div>
-          <div className="glass-panel" style={{ padding: '1.5rem', textAlign: 'center' }}>
-            <h3>Active Deals</h3>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{kpis.openDeals}</p>
+          
+          <div className={`glass-panel ${styles.kpiCard}`}>
+            <div className={styles.kpiHeader}>
+              <h3>Active Deals</h3>
+              <Target className={styles.kpiIcon} size={20} />
+            </div>
+            <p className={styles.kpiValue}>{kpis.openDeals}</p>
           </div>
-          <div className="glass-panel" style={{ padding: '1.5rem', textAlign: 'center' }}>
-            <h3>Team Win Rate</h3>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{(kpis.winRate * 100).toFixed(1)}%</p>
+          
+          <div className={`glass-panel ${styles.kpiCard}`}>
+            <div className={styles.kpiHeader}>
+              <h3>Team Win Rate</h3>
+              <TrendingUp className={styles.kpiIcon} size={20} />
+            </div>
+            <p className={styles.kpiValue}>{(kpis.winRate * 100).toFixed(1)}%</p>
           </div>
-          <div className="glass-panel" style={{ padding: '1.5rem', textAlign: 'center' }}>
-            <h3>Total Won</h3>
-            <p style={{ fontSize: '2rem', fontWeight: 'bold' }}>{kpis.wonDeals}</p>
+          
+          <div className={`glass-panel ${styles.kpiCard}`}>
+            <div className={styles.kpiHeader}>
+              <h3>Total Won</h3>
+              <DollarSign className={styles.kpiIcon} size={20} />
+            </div>
+            <p className={styles.kpiValue}>{kpis.wonDeals}</p>
           </div>
         </div>
 
         <DashboardCharts activities={activities} deals={deals} isAdmin={true} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-          <div className="glass-panel" style={{ padding: '1.5rem' }}>
-            <h2 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Team Funnel</h2>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+        <div className={styles.summaryGrid}>
+          <div className={`glass-panel ${styles.summaryCard}`}>
+            <h2 className={styles.summaryTitle}>Team Funnel</h2>
+            <ul className={styles.funnelList}>
+              <li className={styles.funnelItem}>
                 <span>Leads ➔ Responses:</span>
                 <strong>{(kpis.leadToResponseRate * 100).toFixed(1)}%</strong>
               </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <li className={styles.funnelItem}>
                 <span>Responses ➔ Meetings:</span>
                 <strong>{(kpis.responseToMeetingRate * 100).toFixed(1)}%</strong>
               </li>
-              <li style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <li className={styles.funnelItem}>
                 <span>Meetings ➔ Deals:</span>
                 <strong>{(kpis.meetingToDealRate * 100).toFixed(1)}%</strong>
               </li>
             </ul>
           </div>
           
-          <div className="glass-panel" style={{ padding: '1.5rem' }}>
-            <h2 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Needs Attention</h2>
-            {kpis.lostDeals > 0 ? (
-              <p style={{ color: 'var(--error)' }}>
-                {kpis.lostDeals} deal(s) lost. Check deal reports for lost reasons.
-              </p>
-            ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>No immediate red flags.</p>
-            )}
-            {activities.length === 0 && (
-              <p style={{ color: 'var(--warning)', marginTop: '1rem' }}>
-                No activities logged in the selected period.
-              </p>
-            )}
+          <div className={`glass-panel ${styles.summaryCard}`}>
+            <h2 className={styles.summaryTitle}>Needs Attention</h2>
+            <div style={{ marginTop: '0.5rem' }}>
+              {kpis.lostDeals > 0 ? (
+                <p className={styles.attentionDanger}>
+                  <AlertCircle size={18} />
+                  {kpis.lostDeals} deal(s) lost. Check deal reports for lost reasons.
+                </p>
+              ) : (
+                <p className={styles.attentionText}>No immediate red flags.</p>
+              )}
+              {activities.length === 0 && (
+                <p className={styles.attentionWarning} style={{ marginTop: '1rem' }}>
+                  <AlertTriangle size={18} />
+                  No activities logged in the selected period.
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

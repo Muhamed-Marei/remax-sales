@@ -5,6 +5,7 @@ import { COLLECTIONS } from '@/lib/constants/collections';
 import styles from './users.module.css';
 import { InviteUserForm } from '@/components/admin/InviteUserForm';
 import { UserTableRow } from '@/components/admin/UserTableRow';
+import { Users } from '@/components/ui/Icons';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,12 +37,15 @@ export default async function AdminUsersPage() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Salespeople Management</h1>
+        <h1 className={styles.title} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Users className="brand-gradient-text" size={32} />
+          Salespeople Management
+        </h1>
       </header>
 
       <div className={styles.content}>
         <div className={styles.listSection}>
-          <div className="glass-panel" style={{ padding: '1rem', overflowX: 'auto' }}>
+          <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead>
                 <tr>
@@ -56,7 +60,7 @@ export default async function AdminUsersPage() {
               <tbody>
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
                       No salespeople found.
                     </td>
                   </tr>
@@ -71,7 +75,7 @@ export default async function AdminUsersPage() {
         </div>
 
         <div className={styles.actionSection}>
-          <div className="glass-panel" style={{ padding: '1.5rem' }}>
+          <div className={styles.formCard}>
             <h2 className={styles.subtitle}>Invite Salesperson</h2>
             <InviteUserForm />
           </div>

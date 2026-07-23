@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, Suspense } from 'react';
 import { User } from '@/lib/types';
+import styles from './DashboardFilterPanel.module.css';
+import { FilterX } from 'lucide-react';
 
 interface DashboardFilterPanelProps {
   isAdmin?: boolean;
@@ -32,14 +34,14 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div className={styles.filterPanel}>
       {isAdmin && (
-        <div>
-          <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Salesperson</label>
+        <div className={styles.filterGroup}>
+          <label className={styles.filterLabel}>Salesperson</label>
           <select 
             value={searchParams.get('salesId') || ''} 
             onChange={(e) => handleFilterChange('salesId', e.target.value)}
-            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+            className={styles.filterInput}
           >
             <option value="">All Team</option>
             {salespeople.map(sp => (
@@ -49,32 +51,32 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
         </div>
       )}
 
-      <div>
-        <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Start Date</label>
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>Start Date</label>
         <input 
           type="date" 
           value={searchParams.get('startDate') || ''}
           onChange={(e) => handleFilterChange('startDate', e.target.value)}
-          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+          className={styles.filterInput}
         />
       </div>
 
-      <div>
-        <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>End Date</label>
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>End Date</label>
         <input 
           type="date" 
           value={searchParams.get('endDate') || ''}
           onChange={(e) => handleFilterChange('endDate', e.target.value)}
-          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+          className={styles.filterInput}
         />
       </div>
 
-      <div>
-        <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Attendance</label>
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>Attendance</label>
         <select 
           value={searchParams.get('attendance') || ''}
           onChange={(e) => handleFilterChange('attendance', e.target.value)}
-          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+          className={styles.filterInput}
         >
           <option value="">Any</option>
           <option value="present">Present</option>
@@ -85,12 +87,12 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
         </select>
       </div>
 
-      <div>
-        <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Deal State</label>
+      <div className={styles.filterGroup}>
+        <label className={styles.filterLabel}>Deal State</label>
         <select 
           value={searchParams.get('dealState') || ''}
           onChange={(e) => handleFilterChange('dealState', e.target.value)}
-          style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border)' }}
+          className={styles.filterInput}
         >
           <option value="">Any</option>
           <option value="active">Active</option>
@@ -100,11 +102,12 @@ function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelP
         </select>
       </div>
       
-      <div style={{ marginLeft: 'auto' }}>
+      <div className={styles.clearButtonContainer}>
         <button 
           onClick={() => router.push(pathname)}
-          className="btn btn-outline"
+          className="btn btn-secondary"
         >
+          <FilterX size={16} />
           Clear Filters
         </button>
       </div>
