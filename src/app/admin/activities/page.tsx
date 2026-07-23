@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { verifySession } from '@/lib/auth/session';
 import { getActivities } from '@/lib/repositories/activity';
 import { adminDb } from '@/lib/firebase/admin';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +27,7 @@ export default async function AdminActivitiesPage() {
   const activities = await getActivities(orgId);
 
   // Fetch all users to map salesId to user names
-  const usersSnapshot = await adminDb.collection('users').get();
+  const usersSnapshot = await adminDb.collection(COLLECTIONS.USERS).get();
   const userMap: Record<string, any> = {};
   usersSnapshot.docs.forEach(doc => {
     userMap[doc.id] = doc.data();

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { adminDb } from './firebase/admin';
 import { logger } from './logger';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 export interface AuditLogEntry {
   orgId?: string;
@@ -13,7 +14,7 @@ export interface AuditLogEntry {
 
 export async function writeAuditLog(entry: AuditLogEntry) {
   try {
-    const auditCollection = adminDb.collection('auditLogs');
+    const auditCollection = adminDb.collection(COLLECTIONS.AUDIT_LOGS);
       
     await auditCollection.add({
       ...entry,

@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase/client';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/ui/Logo';
@@ -67,7 +68,7 @@ export default function LoginPage() {
       setSuccess('Login successful! Redirecting...');
 
       // Check user role from Firestore using UID (Root 'users' collection)
-      const userDocRef = doc(db, 'users', userCredential.user.uid);
+      const userDocRef = doc(db, COLLECTIONS.USERS, userCredential.user.uid);
       const userDocSnap = await getDoc(userDocRef);
       
       let userRole = 'sales';

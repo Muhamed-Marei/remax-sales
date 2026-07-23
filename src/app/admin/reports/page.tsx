@@ -5,6 +5,7 @@ import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/anal
 import { DashboardFilterPanel } from '@/components/DashboardFilterPanel';
 import { ReportTables } from '@/components/ReportTables';
 import { AttendanceStatus, DealState, User } from '@/lib/types';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import styles from '../users/users.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -37,7 +38,7 @@ export default async function ReportsPage(props: ReportsPageProps) {
 
   // Fetch salespeople for the filter panel
   const usersSnapshot = await adminDb
-    .collection('users')
+    .collection(COLLECTIONS.USERS)
     .where('role', '==', 'salesperson')
     .get();
   

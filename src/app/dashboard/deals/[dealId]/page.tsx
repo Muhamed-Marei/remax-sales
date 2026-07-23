@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { verifySession } from '@/lib/auth/session';
 import { redirect, notFound } from 'next/navigation';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import DealForm from '@/components/forms/DealForm';
 import { getDealById } from '@/lib/repositories/deal';
 import { adminDb } from '@/lib/firebase/admin';
+
+export const dynamic = 'force-dynamic';
 
 export default async function EditDealPage(props: { params: Promise<{ dealId: string }> }) {
   const claims = await verifySession();
@@ -28,14 +31,14 @@ export default async function EditDealPage(props: { params: Promise<{ dealId: st
   let salespeople: { id: string; name: string }[] = [];
 
   if (isAdmin) {
-    const snapshot = await adminDb.collection('users').where('role', '==', 'salesperson').get();
+    const snapshot = await adminDb.collection(COLLECTIONS.USERS).where('role', '==', 'salesperson').get();
     salespeople = snapshot.docs.map(doc => ({
       id: doc.id,
       name: doc.data().name || doc.data().email || 'Unknown',
     }));
   }
 
-  let leadsQuery: FirebaseFirestore.Query = adminDb.collection('leads');
+  let leadsQuery: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.LEADS);
   if (!isAdmin) {
     leadsQuery = leadsQuery.where('assignedSalesId', '==', claims.uid);
   }

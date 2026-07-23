@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { SESSION_COOKIE_NAME } from '@/lib/auth/session';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
     const decodedToken = await adminAuth.verifyIdToken(idToken);
     
     // 2. Fetch the user's current role from the root 'users' collection
-    const userDoc = await adminDb.collection('users').doc(decodedToken.uid).get();
+    const userDoc = await adminDb.collection(COLLECTIONS.USERS).doc(decodedToken.uid).get();
     
     if (userDoc.exists) {
       const userData = userDoc.data();

@@ -1,6 +1,7 @@
 import { verifySession } from '@/lib/auth/session';
 import { getLeadById } from '@/lib/repositories/lead';
-import { redirect } from 'next/navigation';
+import { COLLECTIONS } from '@/lib/constants/collections';
+import { redirect, notFound } from 'next/navigation';
 import LeadForm from '@/components/forms/LeadForm';
 import { adminDb } from '@/lib/firebase/admin';
 
@@ -28,7 +29,7 @@ export default async function EditLeadPage(props: { params: Promise<{ leadId: st
   let salespeople: { id: string; name: string }[] = [];
 
   if (isAdmin) {
-    const snapshot = await adminDb.collection('users').where('role', '==', 'salesperson').get();
+    const snapshot = await adminDb.collection(COLLECTIONS.USERS).where('role', '==', 'salesperson').get();
     salespeople = snapshot.docs.map(doc => ({
       id: doc.id,
       name: doc.data().name || doc.data().email || 'Unknown',

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { adminDb } from '@/lib/firebase/admin';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import styles from './users.module.css';
 import { InviteUserForm } from '@/components/admin/InviteUserForm';
 import { UserTableRow } from '@/components/admin/UserTableRow';
@@ -10,7 +11,7 @@ export default async function AdminUsersPage() {
   const orgId = 'default';
   
   // Fetch users from the root Firestore collection
-  const usersSnapshot = await adminDb.collection('users').get();
+  const usersSnapshot = await adminDb.collection(COLLECTIONS.USERS).get();
   
   const users = usersSnapshot.docs.map(doc => {
     const data = doc.data();

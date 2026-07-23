@@ -1,17 +1,18 @@
 import { adminDb } from '../firebase/admin';
 import { leadSchema } from '../schemas';
+import type { Lead } from '../types';
 import { z } from 'zod';
 import { writeAuditLog } from '../audit';
 import { logger } from '../logger';
 import { FieldValue } from 'firebase-admin/firestore';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
-type Lead = z.infer<typeof leadSchema>;
 type DbLead = Lead & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: FirebaseFirestore.Timestamp };
 
 export async function saveLead(orgId: string, leadData: Lead, actorUid: string, leadId?: string) {
   const validated = leadSchema.parse(leadData);
   
-  const leadsCollection = adminDb.collection('leads');
+  const leadsCollection = adminDb.collection(COLLECTIONS.LEADS);
   const docRef = leadId ? leadsCollection.doc(leadId) : leadsCollection.doc();
   
   await adminDb.runTransaction(async (t) => {
@@ -36,7 +37,7 @@ export async function saveLead(orgId: string, leadData: Lead, actorUid: string, 
 }
 
 export async function getLeads(orgId: string, salesId?: string, status?: string) {
-  let query: FirebaseFirestore.Query = adminDb.collection('leads');
+  let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.LEADS);
   
   if (salesId) {
     query = query.where('assignedSalesId', '==', salesId);
@@ -50,7 +51,7 @@ export async function getLeads(orgId: string, salesId?: string, status?: string)
 }
 
 export async function getLeadById(orgId: string, leadId: string) {
-  const doc = await adminDb.collection('leads').doc(leadId).get();
+  const doc = await adminDb.collection(COLLECTIONS.LEADS).doc(leadId).get();
   if (!doc.exists) {
     return null;
   }

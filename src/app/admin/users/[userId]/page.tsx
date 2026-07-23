@@ -8,6 +8,7 @@ import { calculateKPIs } from '@/lib/analytics/kpi';
 import { DashboardFilterPanel } from '@/components/DashboardFilterPanel';
 import { DashboardCharts } from '@/components/DashboardCharts';
 import { AttendanceStatus, DealState } from '@/lib/types';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,7 @@ export default async function UserProfilePage(props: UserProfilePageProps) {
   }
 
   const orgId = claims.orgId;
-  const userDoc = await adminDb.collection('users').doc(userId).get();
+  const userDoc = await adminDb.collection(COLLECTIONS.USERS).doc(userId).get();
 
   if (!userDoc.exists) {
     notFound();

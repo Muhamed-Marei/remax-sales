@@ -1,15 +1,15 @@
 import { adminDb } from '../firebase/admin';
 import { dailyActivitySchema } from '../schemas';
+import type { DailyActivity } from '../types';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import { z } from 'zod';
 import { writeAuditLog } from '../audit';
 import { logger } from '../logger';
 
-type DailyActivity = z.infer<typeof dailyActivitySchema>;
-
 export async function saveActivity(orgId: string, salesId: string, activityData: DailyActivity, actorUid: string) {
   const validated = dailyActivitySchema.parse(activityData);
   const docId = `${salesId}_${validated.activityDate}`;
-  const docRef = adminDb.collection('activities').doc(docId);
+  const docRef = adminDb.collection(COLLECTIONS.ACTIVITIES).doc(docId);
   
   await adminDb.runTransaction(async (t) => {
     const doc = await t.get(docRef);
@@ -33,7 +33,7 @@ export async function saveActivity(orgId: string, salesId: string, activityData:
 }
 
 export async function getActivities(orgId: string, salesId?: string, startDate?: string, endDate?: string) {
-  let query: FirebaseFirestore.Query = adminDb.collection('activities');
+  let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.ACTIVITIES);
   
   if (salesId) {
     query = query.where('salesId', '==', salesId);
@@ -52,7 +52,7 @@ export async function getActivities(orgId: string, salesId?: string, startDate?:
 }
 
 export async function getActivityById(orgId: string, docId: string) {
-  const docRef = adminDb.collection('activities').doc(docId);
+  const docRef = adminDb.collection(COLLECTIONS.ACTIVITIES).doc(docId);
   const doc = await docRef.get();
   if (!doc.exists) {
     return null;
@@ -62,7 +62,7 @@ export async function getActivityById(orgId: string, docId: string) {
 
 export async function adminEditActivity(orgId: string, docId: string, newData: DailyActivity, adminUid: string) {
   const validated = dailyActivitySchema.parse(newData);
-  const docRef = adminDb.collection('activities').doc(docId);
+  const docRef = adminDb.collection(COLLECTIONS.ACTIVITIES).doc(docId);
   
   let oldData = null;
 

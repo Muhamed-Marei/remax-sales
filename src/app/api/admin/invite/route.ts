@@ -4,6 +4,7 @@ import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { verifySession } from '@/lib/auth/session';
 import { logger } from '@/lib/logger';
 import { writeAuditLog } from '@/lib/audit';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     // 4. Mirror the user in Firestore (root 'users' collection)
     const now = new Date();
-    await adminDb.collection('users').doc(userRecord.uid).set({
+    await adminDb.collection(COLLECTIONS.USERS).doc(userRecord.uid).set({
       id: userRecord.uid,
       email: userRecord.email,
       name: userRecord.displayName || '',

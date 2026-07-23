@@ -4,6 +4,7 @@ import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { verifySession } from '@/lib/auth/session';
 import { logger } from '@/lib/logger';
 import { writeAuditLog } from '@/lib/audit';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +39,7 @@ export async function POST(
 
     // 4. Update the user in Firestore (root 'users' collection)
     const now = new Date();
-    await adminDb.collection('users').doc(userId).update({
+    await adminDb.collection(COLLECTIONS.USERS).doc(userId).update({
       active,
       updatedAt: now,
     });

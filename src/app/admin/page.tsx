@@ -3,10 +3,13 @@ import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/auth/session';
 import { getFilteredActivities, getFilteredDeals } from '@/lib/repositories/analytics';
 import { calculateKPIs } from '@/lib/analytics/kpi';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import { DashboardFilterPanel } from '@/components/DashboardFilterPanel';
 import { DashboardCharts } from '@/components/DashboardCharts';
 import { AttendanceStatus, DealState, User } from '@/lib/types';
 import { adminDb } from '@/lib/firebase/admin';
+
+export const dynamic = 'force-dynamic';
 
 interface AdminOverviewPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -37,7 +40,7 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
   // Fetch salespeople for the filter panel and activities/deals in parallel
   const [usersSnapshot, activities, deals] = await Promise.all([
     adminDb
-      .collection('users')
+      .collection(COLLECTIONS.USERS)
       .where('role', '==', 'salesperson')
       .get(),
     getFilteredActivities({

@@ -1,5 +1,6 @@
 import { verifySession } from '@/lib/auth/session';
 import { getActivityById } from '@/lib/repositories/activity';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import { redirect } from 'next/navigation';
 import AdminActivityEditForm from '@/components/admin/AdminActivityEditForm';
 import { adminDb } from '@/lib/firebase/admin';
@@ -33,7 +34,7 @@ export default async function AdminActivityEditPage({ params }: { params: Promis
   }
 
   // Fetch user to display name
-  const userDoc = await adminDb.collection('users').doc(activity.salesId).get();
+  const userDoc = await adminDb.collection(COLLECTIONS.USERS).doc(activity.salesId).get();
   const userData = userDoc.exists ? userDoc.data() : null;
   const userName = userData?.displayName || userData?.email || activity.salesId;
 

@@ -1,5 +1,6 @@
 import { adminDb } from '../firebase/admin';
-import { DashboardFilter, DailyActivity, Deal } from '../types';
+import { type DashboardFilter, type DailyActivity, type Deal } from '../types';
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 type DbDeal = Deal & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: FirebaseFirestore.Timestamp };
 
@@ -7,7 +8,7 @@ type DbDeal = Deal & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: Fire
  * Fetch activities matching the dashboard filter.
  */
 export async function getFilteredActivities(filter: DashboardFilter): Promise<(DailyActivity & { id: string })[]> {
-  let query: FirebaseFirestore.Query = adminDb.collection('activities');
+  let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.ACTIVITIES);
   
   if (filter.salesId) {
     query = query.where('salesId', '==', filter.salesId);
@@ -35,7 +36,7 @@ export async function getFilteredActivities(filter: DashboardFilter): Promise<(D
  * Fetch deals matching the dashboard filter.
  */
 export async function getFilteredDeals(filter: DashboardFilter): Promise<(DbDeal & { id: string })[]> {
-  let query: FirebaseFirestore.Query = adminDb.collection('deals');
+  let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.DEALS);
   
   if (filter.salesId) {
     query = query.where('assignedSalesId', '==', filter.salesId);

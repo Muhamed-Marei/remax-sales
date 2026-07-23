@@ -1,7 +1,10 @@
 import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
+import { COLLECTIONS } from '@/lib/constants/collections';
 import DealForm from '@/components/forms/DealForm';
 import { adminDb } from '@/lib/firebase/admin';
+
+export const dynamic = 'force-dynamic';
 
 export default async function NewDealPage() {
   const claims = await verifySession();
@@ -15,7 +18,7 @@ export default async function NewDealPage() {
 
   if (isAdmin) {
     const orgId = 'default';
-    const snapshot = await adminDb.collection('users').where('role', '==', 'salesperson').get();
+    const snapshot = await adminDb.collection(COLLECTIONS.USERS).where('role', '==', 'salesperson').get();
     salespeople = snapshot.docs.map(doc => ({
       id: doc.id,
       name: doc.data().name || doc.data().email || 'Unknown',
@@ -23,7 +26,7 @@ export default async function NewDealPage() {
   }
 
   const orgId = 'default';
-  let leadsQuery: FirebaseFirestore.Query = adminDb.collection('leads');
+  let leadsQuery: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.LEADS);
   if (!isAdmin) {
     leadsQuery = leadsQuery.where('assignedSalesId', '==', claims.uid);
   }

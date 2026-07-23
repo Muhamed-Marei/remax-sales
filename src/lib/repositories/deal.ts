@@ -1,16 +1,16 @@
 import { adminDb } from '../firebase/admin';
 import { dealSchema } from '../schemas';
+import type { Deal } from '../types';
 import { z } from 'zod';
 import { writeAuditLog } from '../audit';
 import { logger } from '../logger';
 import { FieldValue } from 'firebase-admin/firestore';
-
-type Deal = z.infer<typeof dealSchema>;
+import { COLLECTIONS } from '@/lib/constants/collections';
 
 export async function saveDeal(orgId: string, dealData: Deal, actorUid: string, dealId?: string) {
   const validated = dealSchema.parse(dealData);
   
-  const dealsCollection = adminDb.collection('deals');
+  const dealsCollection = adminDb.collection(COLLECTIONS.DEALS);
   const docRef = dealId ? dealsCollection.doc(dealId) : dealsCollection.doc();
   
   await adminDb.runTransaction(async (t) => {
@@ -22,7 +22,7 @@ export async function saveDeal(orgId: string, dealData: Deal, actorUid: string, 
       
       // Enforce atomic state transition in history
       if (existingData.dealState !== validated.dealState) {
-        const historyRef = adminDb.collection('dealStateHistory').doc();
+        const historyRef = adminDb.collection(COLLECTIONS.DEAL_STATE_HISTORY).doc();
         t.set(historyRef, {
           dealId: docRef.id,
           previousState: existingData.dealState,
@@ -51,7 +51,7 @@ export async function saveDeal(orgId: string, dealData: Deal, actorUid: string, 
 type DbDeal = Deal & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: FirebaseFirestore.Timestamp };
 
 export async function getDeals(orgId: string, salesId?: string, state?: string) {
-  let query: FirebaseFirestore.Query = adminDb.collection('deals');
+  let query: FirebaseFirestore.Query = adminDb.collection(COLLECTIONS.DEALS);
   
   if (salesId) {
     query = query.where('assignedSalesId', '==', salesId);
@@ -65,7 +65,7 @@ export async function getDeals(orgId: string, salesId?: string, state?: string) 
 }
 
 export async function getDealById(orgId: string, dealId: string) {
-  const doc = await adminDb.collection('deals').doc(dealId).get();
+  const doc = await adminDb.collection(COLLECTIONS.DEALS).doc(dealId).get();
   if (!doc.exists) {
     return null;
   }
