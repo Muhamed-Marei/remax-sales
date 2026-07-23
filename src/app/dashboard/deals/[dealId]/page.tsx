@@ -28,14 +28,14 @@ export default async function EditDealPage(props: { params: Promise<{ dealId: st
   let salespeople: { id: string; name: string }[] = [];
 
   if (isAdmin) {
-    const snapshot = await adminDb.collection('organizations').doc(orgId).collection('users').where('role', '==', 'salesperson').get();
+    const snapshot = await adminDb.collection('users').where('role', '==', 'salesperson').get();
     salespeople = snapshot.docs.map(doc => ({
       id: doc.id,
       name: doc.data().name || doc.data().email || 'Unknown',
     }));
   }
 
-  let leadsQuery: FirebaseFirestore.Query = adminDb.collection('organizations').doc(orgId).collection('leads');
+  let leadsQuery: FirebaseFirestore.Query = adminDb.collection('leads');
   if (!isAdmin) {
     leadsQuery = leadsQuery.where('assignedSalesId', '==', claims.uid);
   }

@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase/client';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/ui/Logo';
@@ -63,10 +64,26 @@ export default function LoginPage() {
         throw new Error('Failed to create session');
       }
 
-      setSuccess('Login successful! Redirecting to dashboard...');
+      setSuccess('Login successful! Redirecting...');
 
-      // 4. Redirect to dashboard
-      router.push('/dashboard');
+      // Check user role from Firestore using UID (Root 'users' collection)
+      const userDocRef = doc(db, 'users', userCredential.user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      
+      let userRole = 'sales';
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        if (userData.role) {
+          userRole = userData.role;
+        }
+      }
+
+      // 4. Redirect based on role
+      if (userRole === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
       router.refresh(); // Force refresh to apply middleware state
     } catch (err) {
       const error = err as Error & { code?: string };

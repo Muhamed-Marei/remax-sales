@@ -11,7 +11,7 @@ type DbLead = Lead & { createdAt?: FirebaseFirestore.Timestamp; updatedAt?: Fire
 export async function saveLead(orgId: string, leadData: Lead, actorUid: string, leadId?: string) {
   const validated = leadSchema.parse(leadData);
   
-  const leadsCollection = adminDb.collection('organizations').doc(orgId).collection('leads');
+  const leadsCollection = adminDb.collection('leads');
   const docRef = leadId ? leadsCollection.doc(leadId) : leadsCollection.doc();
   
   await adminDb.runTransaction(async (t) => {
@@ -36,7 +36,7 @@ export async function saveLead(orgId: string, leadData: Lead, actorUid: string, 
 }
 
 export async function getLeads(orgId: string, salesId?: string, status?: string) {
-  let query: FirebaseFirestore.Query = adminDb.collection('organizations').doc(orgId).collection('leads');
+  let query: FirebaseFirestore.Query = adminDb.collection('leads');
   
   if (salesId) {
     query = query.where('assignedSalesId', '==', salesId);
@@ -50,7 +50,7 @@ export async function getLeads(orgId: string, salesId?: string, status?: string)
 }
 
 export async function getLeadById(orgId: string, leadId: string) {
-  const doc = await adminDb.collection('organizations').doc(orgId).collection('leads').doc(leadId).get();
+  const doc = await adminDb.collection('leads').doc(leadId).get();
   if (!doc.exists) {
     return null;
   }

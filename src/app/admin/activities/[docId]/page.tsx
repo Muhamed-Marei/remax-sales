@@ -33,7 +33,7 @@ export default async function AdminActivityEditPage({ params }: { params: Promis
   }
 
   // Fetch user to display name
-  const userDoc = await adminDb.collection('organizations').doc(orgId).collection('users').doc(activity.salesId).get();
+  const userDoc = await adminDb.collection('users').doc(activity.salesId).get();
   const userData = userDoc.exists ? userDoc.data() : null;
   const userName = userData?.displayName || userData?.email || activity.salesId;
 

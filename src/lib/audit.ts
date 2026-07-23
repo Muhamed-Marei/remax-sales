@@ -3,7 +3,7 @@ import { adminDb } from './firebase/admin';
 import { logger } from './logger';
 
 export interface AuditLogEntry {
-  orgId: string;
+  orgId?: string;
   actorUid: string; // The user making the change (e.g. admin uid)
   action: string; // e.g., 'USER_INVITED', 'DEAL_UPDATED'
   resource: string; // e.g., 'users/123'
@@ -13,10 +13,7 @@ export interface AuditLogEntry {
 
 export async function writeAuditLog(entry: AuditLogEntry) {
   try {
-    const auditCollection = adminDb
-      .collection('organizations')
-      .doc(entry.orgId)
-      .collection('auditLogs');
+    const auditCollection = adminDb.collection('auditLogs');
       
     await auditCollection.add({
       ...entry,

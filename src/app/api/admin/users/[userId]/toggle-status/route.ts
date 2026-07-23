@@ -36,17 +36,15 @@ export async function POST(
       disabled: !active,
     });
 
-    // 3. Update the user in Firestore
-    const orgId = 'default'; // Hardcoded for MVP
+    // 4. Update the user in Firestore (root 'users' collection)
     const now = new Date();
-    await adminDb.collection('organizations').doc(orgId).collection('users').doc(userId).update({
+    await adminDb.collection('users').doc(userId).update({
       active,
       updatedAt: now,
     });
 
     // 4. Audit Log
     await writeAuditLog({
-      orgId,
       actorUid: claims.uid || 'system',
       action: 'USER_STATUS_CHANGED',
       resource: `users/${userId}`,

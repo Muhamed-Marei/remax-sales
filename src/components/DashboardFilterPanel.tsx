@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, Suspense } from 'react';
 import { User } from '@/lib/types';
 
 interface DashboardFilterPanelProps {
@@ -9,7 +9,7 @@ interface DashboardFilterPanelProps {
   salespeople?: User[];
 }
 
-export function DashboardFilterPanel({ isAdmin, salespeople = [] }: DashboardFilterPanelProps) {
+function FilterPanelContent({ isAdmin, salespeople = [] }: DashboardFilterPanelProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -109,5 +109,13 @@ export function DashboardFilterPanel({ isAdmin, salespeople = [] }: DashboardFil
         </button>
       </div>
     </div>
+  );
+}
+
+export function DashboardFilterPanel(props: DashboardFilterPanelProps) {
+  return (
+    <Suspense fallback={<div className="glass-panel" style={{ padding: '1rem', marginBottom: '1.5rem', opacity: 0.5 }}>Loading filters...</div>}>
+      <FilterPanelContent {...props} />
+    </Suspense>
   );
 }

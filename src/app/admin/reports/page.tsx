@@ -37,8 +37,6 @@ export default async function ReportsPage(props: ReportsPageProps) {
 
   // Fetch salespeople for the filter panel
   const usersSnapshot = await adminDb
-    .collection('organizations')
-    .doc(claims.orgId)
     .collection('users')
     .where('role', '==', 'salesperson')
     .get();

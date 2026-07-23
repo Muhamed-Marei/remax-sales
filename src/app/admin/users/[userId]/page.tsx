@@ -30,7 +30,7 @@ export default async function UserProfilePage(props: UserProfilePageProps) {
   }
 
   const orgId = claims.orgId;
-  const userDoc = await adminDb.collection('organizations').doc(orgId).collection('users').doc(userId).get();
+  const userDoc = await adminDb.collection('users').doc(userId).get();
 
   if (!userDoc.exists) {
     notFound();

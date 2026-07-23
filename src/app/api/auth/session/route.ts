@@ -15,21 +15,17 @@ export async function POST(request: NextRequest) {
     // 1. Verify the ID token first to get UID and current claims
     const decodedToken = await adminAuth.verifyIdToken(idToken);
     
-    // 2. Fetch the user's current role and org from Firestore
-    // Note: Assuming 'default' org for MVP.
-    const orgId = 'default';
-    const userDoc = await adminDb.collection('organizations').doc(orgId).collection('users').doc(decodedToken.uid).get();
+    // 2. Fetch the user's current role from the root 'users' collection
+    const userDoc = await adminDb.collection('users').doc(decodedToken.uid).get();
     
     if (userDoc.exists) {
       const userData = userDoc.data();
       const currentRole = decodedToken.role;
-      const currentOrg = decodedToken.orgId;
       
       // If claims are missing or mismatched, update them and request client to refresh token
-      if (currentRole !== userData?.role || currentOrg !== orgId) {
+      if (currentRole !== userData?.role) {
         await adminAuth.setCustomUserClaims(decodedToken.uid, {
           role: userData?.role || 'salesperson',
-          orgId: orgId,
           admin: userData?.role === 'admin'
         });
         

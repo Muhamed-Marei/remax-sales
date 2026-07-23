@@ -34,18 +34,15 @@ export async function POST(request: NextRequest) {
       emailVerified: false,
     });
 
-    const orgId = 'default'; // Hardcoded for MVP
-
     // 3. Assign the 'salesperson' role (custom claim)
     await adminAuth.setCustomUserClaims(userRecord.uid, { 
       role: 'salesperson',
-      orgId,
       admin: false
     });
 
-    // 4. Mirror the user in Firestore (organizations/default/users)
+    // 4. Mirror the user in Firestore (root 'users' collection)
     const now = new Date();
-    await adminDb.collection('organizations').doc(orgId).collection('users').doc(userRecord.uid).set({
+    await adminDb.collection('users').doc(userRecord.uid).set({
       id: userRecord.uid,
       email: userRecord.email,
       name: userRecord.displayName || '',
@@ -65,7 +62,6 @@ export async function POST(request: NextRequest) {
 
     // 6. Audit Log
     await writeAuditLog({
-      orgId,
       actorUid: claims.uid || 'system',
       action: 'USER_INVITED',
       resource: `users/${userRecord.uid}`,

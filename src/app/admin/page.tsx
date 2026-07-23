@@ -37,8 +37,6 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
   // Fetch salespeople for the filter panel and activities/deals in parallel
   const [usersSnapshot, activities, deals] = await Promise.all([
     adminDb
-      .collection('organizations')
-      .doc(claims.orgId)
       .collection('users')
       .where('role', '==', 'salesperson')
       .get(),

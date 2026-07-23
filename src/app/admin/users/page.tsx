@@ -9,8 +9,8 @@ export const dynamic = 'force-dynamic';
 export default async function AdminUsersPage() {
   const orgId = 'default';
   
-  // Fetch users from the mirrored Firestore collection
-  const usersSnapshot = await adminDb.collection('organizations').doc(orgId).collection('users').get();
+  // Fetch users from the root Firestore collection
+  const usersSnapshot = await adminDb.collection('users').get();
   
   const users = usersSnapshot.docs.map(doc => {
     const data = doc.data();

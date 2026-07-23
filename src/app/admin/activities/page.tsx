@@ -26,7 +26,7 @@ export default async function AdminActivitiesPage() {
   const activities = await getActivities(orgId);
 
   // Fetch all users to map salesId to user names
-  const usersSnapshot = await adminDb.collection('organizations').doc(orgId).collection('users').get();
+  const usersSnapshot = await adminDb.collection('users').get();
   const userMap: Record<string, any> = {};
   usersSnapshot.docs.forEach(doc => {
     userMap[doc.id] = doc.data();
