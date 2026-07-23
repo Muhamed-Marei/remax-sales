@@ -67,12 +67,20 @@ export default async function AdminOverviewPage(props: AdminOverviewPageProps) {
       })
     ]);
     
-    salespeople = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    salespeople = usersSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return { 
+        id: doc.id, 
+        ...data,
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt,
+        lastLoginAt: data.lastLoginAt?.toDate ? data.lastLoginAt.toDate().toISOString() : data.lastLoginAt
+      } as User;
+    });
     activities = fetchedActivities;
     deals = fetchedDeals;
   } catch (error: any) {
     console.error('Admin Overview Data Fetch Error:', error);
-    const errorMessage = error.message || 'Failed to load admin data';
+    const errorMessage = error?.message ? String(error.message) : 'Failed to load admin data';
     let indexLink = '';
     
     // Extract Firebase Console index creation link if present
