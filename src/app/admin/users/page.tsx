@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { adminDb } from '@/lib/firebase/admin';
+import { verifySession } from '@/lib/auth/session';
 import { COLLECTIONS } from '@/lib/constants/collections';
 import styles from './users.module.css';
 import { InviteUserForm } from '@/components/admin/InviteUserForm';
@@ -8,17 +9,26 @@ import { UserTableRow } from '@/components/admin/UserTableRow';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminUsersPage() {
-  const orgId = 'default';
+  const claims = await verifySession();
   
-  // Fetch users from the root Firestore collection
-  const usersSnapshot = await adminDb.collection(COLLECTIONS.USERS).get();
+  if (!claims || !claims.orgId || (claims.role !== 'admin' && claims.admin !== true)) {
+    return null; // proxy.ts or layout handles redirect
+  }
+  
+  // Fetch users from the root Firestore collection filtered by orgId
+  const usersSnapshot = await adminDb.collection(COLLECTIONS.USERS)
+    .where('orgId', '==', claims.orgId)
+    .get();
   
   const users = usersSnapshot.docs.map(doc => {
     const data = doc.data();
     return {
-      ...data,
       id: doc.id,
-      // Safely serialize Firestore Timestamps for Client Components or rendering
+      name: data.displayName || data.name || '',
+      email: data.email || '',
+      role: data.role || 'salesperson',
+      active: data.active ?? true,
+      // Safely serialize Firestore Timestamps for Client Components
       createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt ? new Date(data.createdAt).toISOString() : new Date().toISOString()),
     };
   });
